@@ -17,6 +17,6 @@ class HandlerThrowableService
         return new JsonResponse([
             'message' => $throwable->getMessage(),
             'code' => $throwable->getCode()
-        ]);
+        ], $throwable->getCode());
     }
 }

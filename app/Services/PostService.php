@@ -55,7 +55,7 @@ class PostService
     public function destroy(int $id): void
     {
         $post = $this->postRepository->get($id);
-        if ($post->user_id === (int) auth()->id()) {
+        if ($post->user_id !== (int) auth()->id()) {
             throw new AuthorizationException('This action is unauthorized.', 403);
         }
 

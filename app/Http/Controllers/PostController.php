@@ -14,8 +14,10 @@ class PostController extends Controller
     protected PostService $service;
     protected HandlerThrowableService $handlerThrowableService;
 
-    public function __construct(PostService $service, HandlerThrowableService $handlerThrowableService)
-    {
+    public function __construct(
+        PostService $service,
+        HandlerThrowableService $handlerThrowableService
+    ) {
         $this->service = $service;
         $this->handlerThrowableService = $handlerThrowableService;
     }
