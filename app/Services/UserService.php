@@ -6,7 +6,6 @@ namespace App\Services;
 
 use App\Http\Resources\UserCollection;
 use App\Repositories\Interfaces\UserRepositoryInterface;
-use Illuminate\Pagination\CursorPaginator;
 
 class UserService
 {
@@ -24,8 +23,6 @@ class UserService
 
     public function getUserList(): UserCollection
     {
-        $list = $this->userRepository->all();
-
-        return new UserCollection($list);
+        return $this->userRepository->all();
     }
 }

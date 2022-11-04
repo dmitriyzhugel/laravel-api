@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\PostService;
 use App\Services\HandlerThrowableService;
+use App\Http\Requests\Api\IndexPostRequest;
+use App\Http\Requests\Api\StorePostRequest;
+use App\Http\Requests\Api\UpdatePostRequest;
 use Throwable;
 
 class PostController extends Controller
@@ -23,9 +26,9 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(IndexPostRequest $request)
     {
-        //
+        return $this->service->allByUser((int) auth()->id());
     }
 
     /**
@@ -34,10 +37,11 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
         try {
-
+            // Retrieve the validated input data
+            return $this->service->store($request->validated());
         } catch (Throwable $throwable) {
             return $this->handlerThrowableService->handle($throwable);
         }
@@ -49,10 +53,10 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(int $id)
     {
         try {
-            return $this->service->show($id);
+            return $this->service->get($id);
         } catch (Throwable $throwable) {
             return $this->handlerThrowableService->handle($throwable);
         }
@@ -65,10 +69,10 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdatePostRequest $request, int $id)
     {
         try {
-
+            $this->service->update($id, $request->validated());
         } catch (Throwable $throwable) {
             return $this->handlerThrowableService->handle($throwable);
         }
@@ -80,10 +84,10 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(int $id)
     {
         try {
-
+            $this->service->destroy($id);
         } catch (Throwable $throwable) {
             return $this->handlerThrowableService->handle($throwable);
         }

@@ -3,9 +3,12 @@
 declare(strict_types=1);
 
 namespace App\Repositories\Interfaces;
-use Illuminate\Pagination\CursorPaginator;
+use App\Http\Resources\UserCollection;
 
 interface UserRepositoryInterface
 {
-    public function all(): CursorPaginator;
+    /**
+     * @return UserCollection
+     */
+    public function all(): UserCollection;
 }
