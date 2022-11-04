@@ -20,7 +20,9 @@ class PostRepository implements PostRepositoryInterface
 
     public function allByUser(int $userId): PostCollection
     {
-        return Post::where('user_id', $userId)->get();
+        $posts = Post::where('user_id', $userId)->get();
+
+        return new PostCollection($posts);
     }
 
     public function get(int $id): PostResource

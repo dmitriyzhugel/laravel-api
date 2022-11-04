@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Services\PostService;
 use App\Services\HandlerThrowableService;
-use App\Http\Requests\Api\IndexPostRequest;
-use App\Http\Requests\Api\StorePostRequest;
-use App\Http\Requests\Api\UpdatePostRequest;
+use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
+use Illuminate\Support\Facades\Validator;
 use Throwable;
 
 class PostController extends Controller
@@ -26,7 +25,7 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(IndexPostRequest $request)
+    public function index()
     {
         return $this->service->allByUser((int) auth()->id());
     }
@@ -40,8 +39,21 @@ class PostController extends Controller
     public function store(StorePostRequest $request)
     {
         try {
+            $attributes = json_decode($request->getContent(), true);
+            $validator = Validator::make(
+                $attributes,
+                $request->rules()
+            );
+            if ($validator->fails()) {
+                throw new \Exception('Validation error');
+            }
+
             // Retrieve the validated input data
-            return $this->service->store($request->validated());
+            return $this
+                ->service
+                ->store($attributes)
+                ->response()
+                ->setStatusCode(201);
         } catch (Throwable $throwable) {
             return $this->handlerThrowableService->handle($throwable);
         }
@@ -72,7 +84,16 @@ class PostController extends Controller
     public function update(UpdatePostRequest $request, int $id)
     {
         try {
-            $this->service->update($id, $request->validated());
+            $attributes = json_decode($request->getContent(), true);
+            $validator = Validator::make(
+                $attributes,
+                $request->rules()
+            );
+            if ($validator->fails()) {
+                throw new \Exception('Validation error');
+            }
+
+            return $this->service->update($id, $attributes);
         } catch (Throwable $throwable) {
             return $this->handlerThrowableService->handle($throwable);
         }
@@ -88,6 +109,8 @@ class PostController extends Controller
     {
         try {
             $this->service->destroy($id);
+
+            return response()->noContent();
         } catch (Throwable $throwable) {
             return $this->handlerThrowableService->handle($throwable);
         }
