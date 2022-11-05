@@ -31,14 +31,16 @@ using TDD methodology
 
 ## Installation
 
-cp .env.example .env
-composer install
-./vendor/bin/sail build --no-cache
+``cp .env.example .env``
+``composer install``
+``./vendor/bin/sail build --no-cache``
 
 ## Start local server
 
-./vendor/bin/sail up -d
+``./vendor/bin/sail up -d``
 
-## Run tests
+## Testing
 
-./vendor/bin/sail test
+``./vendor/bin/sail test``
+
+## Routes
