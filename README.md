@@ -32,7 +32,9 @@ using TDD methodology
 ## Installation
 
 ``cp .env.example .env``
+
 ``composer install``
+
 ``./vendor/bin/sail build --no-cache``
 
 ## Start local server
