@@ -61,7 +61,7 @@ class CommentRepository implements CommentRepositoryInterface
 
     public function destroy(int $id): void
     {
-        $comment = Post::find($id);
+        $comment = Comment::find($id);
         if ($comment === null) {
             throw new ModelNotFoundException();
         }

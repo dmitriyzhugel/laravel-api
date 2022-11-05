@@ -33,7 +33,7 @@ class PostService
         return $this->postRepository->get($id);
     }
 
-    public function store(array $attributes): PostResource
+    public function create(array $attributes): PostResource
     {
         return $this
             ->postRepository

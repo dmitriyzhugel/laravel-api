@@ -32,15 +32,13 @@ class CommentService
     {
         return $this
             ->commentRepository
-            ->store(array_merge($attributes, ['user_id' => auth()->id()]))
-            ->response()
-            ->setStatusCode(201);
+            ->create(array_merge($attributes, ['user_id' => auth()->id()]));
     }
 
-    public function update(int $id, array $attributes): PostResource
+    public function update(int $id, array $attributes): CommentResource
     {
         $comment = $this->commentRepository->get($id);
-        if ($comment->user_id === (int) auth()->id()) {
+        if ($comment->user_id !== (int) auth()->id()) {
             throw new AuthorizationException('This action is unauthorized.', 403);
         }
 
@@ -52,7 +50,7 @@ class CommentService
     public function destroy(int $id): void
     {
         $comment = $this->commentRepository->get($id);
-        if ($comment->user_id === (int) auth()->id()) {
+        if ($comment->user_id !== (int) auth()->id()) {
             throw new AuthorizationException('This action is unauthorized.', 403);
         }
 

@@ -53,7 +53,7 @@ class PostController extends Controller
             // Retrieve the validated input data
             return $this
                 ->service
-                ->store($attributes)
+                ->create($attributes)
                 ->response()
                 ->setStatusCode(201);
         } catch (Throwable $throwable) {

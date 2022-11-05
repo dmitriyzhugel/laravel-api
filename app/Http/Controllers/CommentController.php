@@ -2,19 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Services\CommentService;
 use App\Services\HandlerThrowableService;
 use App\Http\Requests\CreateCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
+use Illuminate\Support\Facades\Validator;
+use Throwable;
 
 class CommentController extends Controller
 {
     protected CommentService $service;
     protected HandlerThrowableService $handlerThrowableService;
 
-    public function __construct(CommentService $service, HandlerThrowableService $handlerThrowableService)
-    {
+    public function __construct(
+        CommentService $service,
+        HandlerThrowableService $handlerThrowableService
+    ) {
         $this->service = $service;
         $this->handlerThrowableService = $handlerThrowableService;
     }
@@ -50,7 +53,20 @@ class CommentController extends Controller
     public function store(CreateCommentRequest $request)
     {
         try {
-            return $this->service->create($request->validated());
+            $attributes = json_decode($request->getContent(), true);
+            $validator = Validator::make(
+                $attributes,
+                $request->rules()
+            );
+            if ($validator->fails()) {
+                throw new \Exception('Validation error', 400);
+            }
+
+            return $this
+                ->service
+                ->create($attributes)
+                ->response()
+                ->setStatusCode(201);
         } catch (Throwable $throwable) {
             return $this->handlerThrowableService->handle($throwable);
         }
@@ -66,7 +82,16 @@ class CommentController extends Controller
     public function update(UpdateCommentRequest $request, $id)
     {
         try {
-            $this->service->update($id, $request->validated());
+            $attributes = json_decode($request->getContent(), true);
+            $validator = Validator::make(
+                $attributes,
+                $request->rules()
+            );
+            if ($validator->fails()) {
+                throw new \Exception('Validation error', 400);
+            }
+
+            return $this->service->update($id, $attributes);
         } catch (Throwable $throwable) {
             return $this->handlerThrowableService->handle($throwable);
         }
@@ -82,6 +107,8 @@ class CommentController extends Controller
     {
         try {
             $this->service->destroy($id);
+
+            return response()->noContent();
         } catch (Throwable $throwable) {
             return $this->handlerThrowableService->handle($throwable);
         }
