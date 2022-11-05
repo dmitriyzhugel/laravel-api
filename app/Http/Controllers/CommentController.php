@@ -7,7 +7,6 @@ use App\Services\HandlerThrowableService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Throwable;
-use Illuminate\Http\Exceptions\HttpResponseException;
 
 class CommentController extends Controller
 {

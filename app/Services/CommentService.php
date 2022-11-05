@@ -9,7 +9,6 @@ use App\Http\Resources\CommentResource;
 use App\Repositories\Interfaces\CommentRepositoryInterface;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use PHPUnit\Util\Exception;
 
 class CommentService
 {
