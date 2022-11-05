@@ -96,6 +96,27 @@ class PostsTest extends TestCase
         $this->assertEquals($response->getStatusCode(), 403);
 
         $user->delete();
+    }
 
+    public function test_posts_delete(): void
+    {
+        // Test not auth user
+        $response = $this->deleteJson('/api/posts/' . static::$postId);
+        $this->assertEquals($response->getStatusCode(), 401);
+
+        // Test for not author
+        /** @var User $user */
+        $user = User::factory()->create();
+        $response = $this
+            ->actingAs($user)
+            ->deleteJson('/api/posts/' . static::$postId);
+        $this->assertEquals($response->getStatusCode(), 403);
+        $user->delete();
+
+        // Test auth user + no content responce
+        $response = $this
+            ->actingAs(static::$user)
+            ->deleteJson('/api/posts/' . static::$postId);
+        $this->assertEquals($response->getStatusCode(), 204);
     }
 }
