@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Services\CommentService;
 use App\Services\HandlerThrowableService;
-use App\Http\Requests\CreateCommentRequest;
-use App\Http\Requests\UpdateCommentRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Throwable;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class CommentController extends Controller
 {
@@ -50,16 +50,19 @@ class CommentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CreateCommentRequest $request)
+    public function store(Request $request)
     {
         try {
             $attributes = json_decode($request->getContent(), true);
             $validator = Validator::make(
                 $attributes,
-                $request->rules()
+                [
+                    'comment' => 'required|string',
+                    'post_id' => 'required|exists:posts,id',
+                ]
             );
             if ($validator->fails()) {
-                throw new \Exception('Validation error', 400);
+                throw new \Exception('Validation error', 422);
             }
 
             return $this
@@ -79,16 +82,19 @@ class CommentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateCommentRequest $request, $id)
+    public function update(Request $request, $id)
     {
         try {
             $attributes = json_decode($request->getContent(), true);
             $validator = Validator::make(
                 $attributes,
-                $request->rules()
+                [
+                    'comment' => 'required|string',
+                    'post_id' => 'exists:posts,id',
+                ]
             );
             if ($validator->fails()) {
-                throw new \Exception('Validation error', 400);
+                throw new \Exception('Validation errors', 422);
             }
 
             return $this->service->update($id, $attributes);

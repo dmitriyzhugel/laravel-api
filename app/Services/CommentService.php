@@ -41,7 +41,7 @@ class CommentService
     {
         $comment = $this->commentRepository->get($id);
         if ($comment === null) {
-            throw new ModelNotFoundException();
+            throw new ModelNotFoundException('ModelNotFound', 404);
         }
         if ($comment->user_id !== (int) auth()->id()) {
             throw new AuthorizationException('This action is unauthorized.', 403);
@@ -56,7 +56,7 @@ class CommentService
     {
         $comment = $this->commentRepository->get($id);
         if ($comment === null) {
-            throw new ModelNotFoundException();
+            throw new ModelNotFoundException('ModelNotFound', 404);
         }
         if ($comment->user_id !== (int) auth()->id()) {
             throw new AuthorizationException('This action is unauthorized.', 403);
