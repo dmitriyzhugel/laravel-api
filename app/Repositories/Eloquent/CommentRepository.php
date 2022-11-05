@@ -23,14 +23,11 @@ class CommentRepository implements CommentRepositoryInterface
         return Comment::where('post_id', $postId)->get();
     }
 
-    public function get(int $id): CommentResource
+    public function get(int $id): ?CommentResource
     {
         $comment = Comment::find($id);
-        if ($comment === null) {
-            throw new ModelNotFoundException();
-        }
 
-        return new CommentResource($comment);
+        return $comment !== null ? (new CommentResource($comment)) : null;
     }
 
     public function create(array $attributes): CommentResource
@@ -61,11 +58,6 @@ class CommentRepository implements CommentRepositoryInterface
 
     public function destroy(int $id): void
     {
-        $comment = Comment::find($id);
-        if ($comment === null) {
-            throw new ModelNotFoundException();
-        }
-
-        $comment->delete();
+        Comment::destroy($id);
     }
 }

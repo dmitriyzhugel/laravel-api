@@ -8,6 +8,8 @@ use App\Http\Resources\CommentCollection;
 use App\Http\Resources\CommentResource;
 use App\Repositories\Interfaces\CommentRepositoryInterface;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use PHPUnit\Util\Exception;
 
 class CommentService
 {
@@ -38,6 +40,9 @@ class CommentService
     public function update(int $id, array $attributes): CommentResource
     {
         $comment = $this->commentRepository->get($id);
+        if ($comment === null) {
+            throw new ModelNotFoundException();
+        }
         if ($comment->user_id !== (int) auth()->id()) {
             throw new AuthorizationException('This action is unauthorized.', 403);
         }
@@ -50,6 +55,9 @@ class CommentService
     public function destroy(int $id): void
     {
         $comment = $this->commentRepository->get($id);
+        if ($comment === null) {
+            throw new ModelNotFoundException();
+        }
         if ($comment->user_id !== (int) auth()->id()) {
             throw new AuthorizationException('This action is unauthorized.', 403);
         }
