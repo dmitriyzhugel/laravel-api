@@ -8,6 +8,7 @@ use App\Http\Resources\PostCollection;
 use App\Http\Resources\PostResource;
 use App\Repositories\Interfaces\PostRepositoryInterface;
 use Illuminate\Auth\Access\AuthorizationException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PostService
 {
@@ -30,7 +31,12 @@ class PostService
 
     public function get(int $id): PostResource
     {
-        return $this->postRepository->get($id);
+        $post = $this->postRepository->get($id);
+        if ($post === null) {
+            throw new NotFoundHttpException('Post not found');
+        }
+
+        return $post;
     }
 
     public function create(array $attributes): PostResource
@@ -43,8 +49,11 @@ class PostService
     public function update(int $id, array $attributes): PostResource
     {
         $post = $this->postRepository->get($id);
+        if ($post === null) {
+            throw new NotFoundHttpException('Post not found');
+        }
         if ((int) $post->user_id !== (int) auth()->id()) {
-            throw new AuthorizationException('This action is unauthorized.', 403);
+            throw new AuthorizationException('This action is unauthorized.');
         }
 
         return $this
@@ -55,8 +64,11 @@ class PostService
     public function destroy(int $id): void
     {
         $post = $this->postRepository->get($id);
-        if ($post->user_id !== (int) auth()->id()) {
-            throw new AuthorizationException('This action is unauthorized.', 403);
+        if ($post === null) {
+            throw new NotFoundHttpException('Post not found');
+        }
+        if ((int) $post->user_id !== (int) auth()->id()) {
+            throw new AuthorizationException('This action is unauthorized.');
         }
 
         $this->postRepository->destroy($id);

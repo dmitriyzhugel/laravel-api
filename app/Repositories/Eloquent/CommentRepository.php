@@ -44,10 +44,6 @@ class CommentRepository implements CommentRepositoryInterface
     public function update(int $id, array $attributes): CommentResource
     {
         $comment = Comment::find($id);
-        if ($comment === null) {
-            throw new ModelNotFoundException();
-        }
-
         $comment->fill($attributes);
         if (!$comment->save()) {
             throw new CommentRepositoryException('Comment update problem', 400);

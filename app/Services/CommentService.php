@@ -8,7 +8,7 @@ use App\Http\Resources\CommentCollection;
 use App\Http\Resources\CommentResource;
 use App\Repositories\Interfaces\CommentRepositoryInterface;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CommentService
 {
@@ -40,10 +40,10 @@ class CommentService
     {
         $comment = $this->commentRepository->get($id);
         if ($comment === null) {
-            throw new ModelNotFoundException('ModelNotFound', 404);
+            throw new NotFoundHttpException('Comment not found');
         }
         if ($comment->user_id !== (int) auth()->id()) {
-            throw new AuthorizationException('This action is unauthorized.', 403);
+            throw new AuthorizationException('This action is unauthorized.');
         }
 
         return $this
@@ -55,10 +55,10 @@ class CommentService
     {
         $comment = $this->commentRepository->get($id);
         if ($comment === null) {
-            throw new ModelNotFoundException('ModelNotFound', 404);
+            throw new NotFoundHttpException('Comment not found');
         }
         if ($comment->user_id !== (int) auth()->id()) {
-            throw new AuthorizationException('This action is unauthorized.', 403);
+            throw new AuthorizationException('This action is unauthorized.');
         }
 
         $this->commentRepository->destroy($id);

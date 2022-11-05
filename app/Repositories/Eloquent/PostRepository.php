@@ -25,14 +25,11 @@ class PostRepository implements PostRepositoryInterface
         return new PostCollection($posts);
     }
 
-    public function get(int $id): PostResource
+    public function get(int $id): ?PostResource
     {
         $post = Post::find($id);
-        if ($post === null) {
-            throw new ModelNotFoundException();
-        }
 
-        return new PostResource($post);
+        return $post !== null ? (new PostResource($post)) : null;
     }
 
     public function create(array $attributes): PostResource
@@ -49,10 +46,6 @@ class PostRepository implements PostRepositoryInterface
     public function update(int $id, array $attributes): PostResource
     {
         $post = Post::find($id);
-        if ($post === null) {
-            throw new ModelNotFoundException();
-        }
-
         $post->fill($attributes);
         if (!$post->save()) {
             throw new PostRepositoryException('Post update problem', 400);
@@ -63,11 +56,6 @@ class PostRepository implements PostRepositoryInterface
 
     public function destroy(int $id): void
     {
-        $post = Post::find($id);
-        if ($post === null) {
-            throw new ModelNotFoundException();
-        }
-
-        $post->delete();
+        Post::destroy($id);
     }
 }

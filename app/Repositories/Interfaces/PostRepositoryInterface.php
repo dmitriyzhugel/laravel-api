@@ -10,7 +10,7 @@ interface PostRepositoryInterface
 {
     public function all(): PostCollection;
     public function allByUser(int $userId): PostCollection;
-    public function get(int $id): PostResource;
+    public function get(int $id): ?PostResource;
     public function create(array $attributes): PostResource;
     public function update(int $id, array $attributes): PostResource;
     public function destroy(int $id): void;

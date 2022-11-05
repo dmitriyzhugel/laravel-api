@@ -3,44 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Services\CommentService;
-use App\Services\HandlerThrowableService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Throwable;
+use Illuminate\Validation\ValidationException;
 
 class CommentController extends Controller
 {
     protected CommentService $service;
-    protected HandlerThrowableService $handlerThrowableService;
 
-    public function __construct(
-        CommentService $service,
-        HandlerThrowableService $handlerThrowableService
-    ) {
-        $this->service = $service;
-        $this->handlerThrowableService = $handlerThrowableService;
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function __construct(CommentService $service)
     {
-        try {
-        } catch (Throwable $throwable) {
-            return $this->handlerThrowableService->handle($throwable);
-        }
+        $this->service = $service;
     }
 
     public function allByPost(int $post_id)
     {
-        try {
-            return $this->service->getAllByPost($post_id);
-        } catch (Throwable $throwable) {
-            return $this->handlerThrowableService->handle($throwable);
-        }
+        return $this->service->getAllByPost($post_id);
     }
 
     /**
@@ -51,27 +29,23 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $attributes = json_decode($request->getContent(), true);
-            $validator = Validator::make(
-                $attributes,
-                [
-                    'comment' => 'required|string',
-                    'post_id' => 'required|exists:posts,id',
-                ]
-            );
-            if ($validator->fails()) {
-                throw new \Exception('Validation error', 422);
-            }
-
-            return $this
-                ->service
-                ->create($attributes)
-                ->response()
-                ->setStatusCode(201);
-        } catch (Throwable $throwable) {
-            return $this->handlerThrowableService->handle($throwable);
+        $attributes = json_decode($request->getContent(), true);
+        $validator = Validator::make(
+            $attributes,
+            [
+                'comment' => 'required|string',
+                'post_id' => 'required|exists:posts,id',
+            ]
+        );
+        if ($validator->fails()) {
+            throw ValidationException::withMessages($validator->messages()->all());
         }
+
+        return $this
+            ->service
+            ->create($attributes)
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
@@ -83,23 +57,19 @@ class CommentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try {
-            $attributes = json_decode($request->getContent(), true);
-            $validator = Validator::make(
-                $attributes,
-                [
-                    'comment' => 'required|string',
-                    'post_id' => 'exists:posts,id',
-                ]
-            );
-            if ($validator->fails()) {
-                throw new \Exception('Validation errors', 422);
-            }
-
-            return $this->service->update($id, $attributes);
-        } catch (Throwable $throwable) {
-            return $this->handlerThrowableService->handle($throwable);
+        $attributes = json_decode($request->getContent(), true);
+        $validator = Validator::make(
+            $attributes,
+            [
+                'comment' => 'required|string',
+                'post_id' => 'exists:posts,id',
+            ]
+        );
+        if ($validator->fails()) {
+            throw ValidationException::withMessages($validator->messages()->all());
         }
+
+        return $this->service->update($id, $attributes);
     }
 
     /**
@@ -110,12 +80,8 @@ class CommentController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            $this->service->destroy($id);
+        $this->service->destroy($id);
 
-            return response()->noContent();
-        } catch (Throwable $throwable) {
-            return $this->handlerThrowableService->handle($throwable);
-        }
+        return response()->noContent();
     }
 }

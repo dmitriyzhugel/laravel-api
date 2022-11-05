@@ -7,7 +7,9 @@ use App\Services\HandlerThrowableService;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Throwable;
+use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
@@ -38,27 +40,26 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StorePostRequest $request)
+    public function store(Request $request)
     {
-        try {
-            $attributes = json_decode($request->getContent(), true);
-            $validator = Validator::make(
-                $attributes,
-                $request->rules()
-            );
-            if ($validator->fails()) {
-                throw new \Exception('Validation error');
-            }
-
-            // Retrieve the validated input data
-            return $this
-                ->service
-                ->create($attributes)
-                ->response()
-                ->setStatusCode(201);
-        } catch (Throwable $throwable) {
-            return $this->handlerThrowableService->handle($throwable);
+        $attributes = json_decode($request->getContent(), true);
+        $validator = Validator::make(
+            $attributes,
+            [
+                'title' => 'required|string|max:255',
+                'content' => 'required|string',
+            ]
+        );
+        if ($validator->fails()) {
+            throw ValidationException::withMessages($validator->messages()->all());
         }
+
+        // Retrieve the validated input data
+        return $this
+            ->service
+            ->create($attributes)
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
@@ -69,11 +70,7 @@ class PostController extends Controller
      */
     public function show(int $id)
     {
-        try {
-            return $this->service->get($id);
-        } catch (Throwable $throwable) {
-            return $this->handlerThrowableService->handle($throwable);
-        }
+        return $this->service->get($id);
     }
 
     /**
@@ -83,22 +80,21 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdatePostRequest $request, int $id)
+    public function update(Request $request, int $id)
     {
-        try {
-            $attributes = json_decode($request->getContent(), true);
-            $validator = Validator::make(
-                $attributes,
-                $request->rules()
-            );
-            if ($validator->fails()) {
-                throw new \Exception('Validation error');
-            }
-
-            return $this->service->update($id, $attributes);
-        } catch (Throwable $throwable) {
-            return $this->handlerThrowableService->handle($throwable);
+        $attributes = json_decode($request->getContent(), true);
+        $validator = Validator::make(
+            $attributes,
+            [
+                'title' => 'required|string|max:255',
+                'content' => 'required|string',
+            ]
+        );
+        if ($validator->fails()) {
+            throw ValidationException::withMessages($validator->messages()->all());
         }
+
+        return $this->service->update($id, $attributes);
     }
 
     /**
@@ -109,12 +105,8 @@ class PostController extends Controller
      */
     public function destroy(int $id)
     {
-        try {
-            $this->service->destroy($id);
+        $this->service->destroy($id);
 
-            return response()->noContent();
-        } catch (Throwable $throwable) {
-            return $this->handlerThrowableService->handle($throwable);
-        }
+        return response()->noContent();
     }
 }
