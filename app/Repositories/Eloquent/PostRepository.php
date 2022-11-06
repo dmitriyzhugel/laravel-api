@@ -8,7 +8,6 @@ use App\Http\Resources\PostCollection;
 use App\Http\Resources\PostResource;
 use App\Repositories\Interfaces\PostRepositoryInterface;
 use App\Models\Post;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Exceptions\PostRepositoryException;
 
 class PostRepository implements PostRepositoryInterface

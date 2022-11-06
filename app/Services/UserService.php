@@ -21,6 +21,9 @@ class UserService
         $this->userRepository = $userRepository;
     }
 
+    /**
+     * @return UserCollection
+     */
     public function getUserList(): UserCollection
     {
         return $this->userRepository->all();

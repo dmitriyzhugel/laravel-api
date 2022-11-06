@@ -8,7 +8,6 @@ use App\Http\Resources\CommentCollection;
 use App\Http\Resources\CommentResource;
 use App\Repositories\Interfaces\CommentRepositoryInterface;
 use App\Models\Comment;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Exceptions\CommentRepositoryException;
 
 class CommentRepository implements CommentRepositoryInterface

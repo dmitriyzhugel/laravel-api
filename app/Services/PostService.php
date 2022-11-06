@@ -24,11 +24,19 @@ class PostService
         $this->postRepository = $postRepository;
     }
 
+    /**
+     * @param int $userId
+     * @return PostCollection
+     */
     public function allByUser(int $userId): PostCollection
     {
         return $this->postRepository->allByUser($userId);
     }
 
+    /**
+     * @param int $id
+     * @return PostResource
+     */
     public function get(int $id): PostResource
     {
         $post = $this->postRepository->get($id);
@@ -39,6 +47,10 @@ class PostService
         return $post;
     }
 
+    /**
+     * @param array $attributes
+     * @return PostResource
+     */
     public function create(array $attributes): PostResource
     {
         return $this
@@ -46,6 +58,12 @@ class PostService
             ->create(array_merge($attributes, ['user_id' => auth()->id()]));
     }
 
+    /**
+     * @param int $id
+     * @param array $attributes
+     * @return PostResource
+     * @throws AuthorizationException
+     */
     public function update(int $id, array $attributes): PostResource
     {
         $post = $this->postRepository->get($id);
@@ -61,6 +79,10 @@ class PostService
             ->update($id, $attributes);
     }
 
+    /**
+     * @param int $id
+     * @throws AuthorizationException
+     */
     public function destroy(int $id): void
     {
         $post = $this->postRepository->get($id);

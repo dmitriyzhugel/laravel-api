@@ -24,11 +24,19 @@ class CommentService
         $this->commentRepository = $commentRepository;
     }
 
+    /**
+     * @param int $postId
+     * @return CommentCollection
+     */
     public function getAllByPost(int $postId): CommentCollection
     {
         return $this->commentRepository->allByPost($postId);
     }
 
+    /**
+     * @param array $attributes
+     * @return CommentResource
+     */
     public function create(array $attributes): CommentResource
     {
         return $this
@@ -36,6 +44,12 @@ class CommentService
             ->create(array_merge($attributes, ['user_id' => auth()->id()]));
     }
 
+    /**
+     * @param int $id
+     * @param array $attributes
+     * @return CommentResource
+     * @throws AuthorizationException
+     */
     public function update(int $id, array $attributes): CommentResource
     {
         $comment = $this->commentRepository->get($id);
@@ -51,6 +65,10 @@ class CommentService
             ->update($id, $attributes);
     }
 
+    /**
+     * @param int $id
+     * @throws AuthorizationException
+     */
     public function destroy(int $id): void
     {
         $comment = $this->commentRepository->get($id);

@@ -12,6 +12,10 @@ use Throwable;
  */
 class HandlerThrowableService
 {
+    /**
+     * @param Throwable $throwable
+     * @return JsonResponse
+     */
     public function handle(Throwable $throwable): JsonResponse
     {
         return new JsonResponse([

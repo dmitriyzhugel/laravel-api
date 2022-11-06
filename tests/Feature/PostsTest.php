@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use App\Models\Post;
 use Tests\TestCase;
 use Faker\Factory;
 use Faker\Generator;
