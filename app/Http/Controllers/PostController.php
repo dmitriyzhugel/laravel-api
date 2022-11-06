@@ -1,27 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Services\PostService;
-use App\Services\HandlerThrowableService;
-use App\Http\Requests\StorePostRequest;
-use App\Http\Requests\UpdatePostRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use Throwable;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
     protected PostService $service;
-    protected HandlerThrowableService $handlerThrowableService;
 
-    public function __construct(
-        PostService $service,
-        HandlerThrowableService $handlerThrowableService
-    ) {
+    public function __construct(PostService $service)
+    {
         $this->service = $service;
-        $this->handlerThrowableService = $handlerThrowableService;
     }
 
     /**
