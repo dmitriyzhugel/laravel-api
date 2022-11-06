@@ -7,7 +7,7 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## Test task
+## Task Description
 
 Description:
 You have 3 tables - users , posts , comments
@@ -46,3 +46,21 @@ using TDD methodology
 ``./vendor/bin/sail test``
 
 ## Routes
+
+```
+GET api/users - all users with posts and all comments
+```
+
+```
+GET api/posts - all posts belong to current user
+POST api/posts - create a new post
+PUT api/posts/{id} - update post by id
+DELETE api/posts/{id} - delete post by id
+```
+
+```
+GET posts/{post_id}/comments - comments list by post_id
+POST api/comments - create a new comment
+PUT api/comments/{id} - update comment by id
+DELETE api/comments/{id} - delete comment by id
+```
