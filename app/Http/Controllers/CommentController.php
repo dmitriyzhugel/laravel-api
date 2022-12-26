@@ -8,6 +8,7 @@ use App\Services\CommentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use App\Http\Requests\CreateCommentRequest;
 
 class CommentController extends Controller
 {
@@ -26,26 +27,14 @@ class CommentController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param CreateCommentRequest $request
+     * @return \Illuminate\Http\JsonResponse|object
      */
-    public function store(Request $request)
+    public function store(CreateCommentRequest $request)
     {
-        $attributes = json_decode($request->getContent(), true);
-        $validator = Validator::make(
-            $attributes,
-            [
-                'comment' => 'required|string',
-                'post_id' => 'required|exists:posts,id',
-            ]
-        );
-        if ($validator->fails()) {
-            throw ValidationException::withMessages($validator->messages()->all());
-        }
-
         return $this
             ->service
-            ->create($attributes)
+            ->create($request->json()->all())
             ->response()
             ->setStatusCode(201);
     }
