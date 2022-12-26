@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Services\PostService;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Http\Request;
+use App\Http\Requests\Post\StorePostRequest;
+use App\Http\Requests\Post\UpdatePostRequest;
 
 class PostController extends Controller
 {
@@ -31,27 +30,14 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param StorePostRequest $request
+     * @return \Illuminate\Http\JsonResponse|object
      */
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
-        $attributes = json_decode($request->getContent(), true);
-        $validator = Validator::make(
-            $attributes,
-            [
-                'title' => 'required|string|max:255',
-                'content' => 'required|string',
-            ]
-        );
-        if ($validator->fails()) {
-            throw ValidationException::withMessages($validator->messages()->all());
-        }
-
-        // Retrieve the validated input data
         return $this
             ->service
-            ->create($attributes)
+            ->create($request->json()->all())
             ->response()
             ->setStatusCode(201);
     }
@@ -70,25 +56,14 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param UpdatePostRequest $request
+     * @param int $id
+     * @return \App\Http\Resources\PostResource
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function update(Request $request, int $id)
+    public function update(UpdatePostRequest $request, int $id)
     {
-        $attributes = json_decode($request->getContent(), true);
-        $validator = Validator::make(
-            $attributes,
-            [
-                'title' => 'required|string|max:255',
-                'content' => 'required|string',
-            ]
-        );
-        if ($validator->fails()) {
-            throw ValidationException::withMessages($validator->messages()->all());
-        }
-
-        return $this->service->update($id, $attributes);
+        return $this->service->update($id, $request->json()->all());
     }
 
     /**

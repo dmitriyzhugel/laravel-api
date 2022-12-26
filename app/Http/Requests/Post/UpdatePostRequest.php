@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Post;
 
-use Illuminate\Http\Request;
+use Illuminate\Foundation\Http\FormRequest;
 
-class StorePostRequest extends Request
+class UpdatePostRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,5 +27,10 @@ class StorePostRequest extends Request
             'title' => 'required|string|max:255',
             'content' => 'required|string',
         ];
+    }
+
+    public function validationData()
+    {
+        return $this->json()->all();
     }
 }
