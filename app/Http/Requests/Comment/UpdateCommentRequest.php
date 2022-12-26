@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Comment;
 
-use Illuminate\Http\Request;
+use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateCommentRequest extends Request
+class UpdateCommentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,5 +29,10 @@ class UpdateCommentRequest extends Request
             'comment' => 'required|string',
             'post_id' => 'exists:posts,id',
         ];
+    }
+
+    public function validationData()
+    {
+        return $this->json()->all();
     }
 }

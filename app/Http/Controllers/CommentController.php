@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Services\CommentService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use App\Http\Requests\CreateCommentRequest;
+use App\Http\Requests\Comment\CreateCommentRequest;
+use App\Http\Requests\Comment\UpdateCommentRequest;
 
 class CommentController extends Controller
 {
@@ -42,25 +41,15 @@ class CommentController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param UpdateCommentRequest $request
+     * @param int $id
+     * @return \App\Http\Resources\CommentResource
+     * @throws ValidationException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function update(Request $request, int $id)
+    public function update(UpdateCommentRequest $request, int $id)
     {
-        $attributes = json_decode($request->getContent(), true);
-        $validator = Validator::make(
-            $attributes,
-            [
-                'comment' => 'required|string',
-                'post_id' => 'exists:posts,id',
-            ]
-        );
-        if ($validator->fails()) {
-            throw ValidationException::withMessages($validator->messages()->all());
-        }
-
-        return $this->service->update($id, $attributes);
+        return $this->service->update($id, $request->json()->all());
     }
 
     /**
